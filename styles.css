@@ -1,0 +1,98 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #00aaff;
+}
+
+/* Estilo para las preguntas */
+.question {
+    margin-bottom: 20px;
+}
+
+p {
+    margin: 0 0 10px;
+    font-size: 18px;
+}
+
+/* Estilo para las respuestas */
+.answers {
+    display: flex;
+    flex-direction: column;
+}
+
+.answers input[type="radio"] {
+    display: none;
+}
+
+.answers label {
+    background-color: #333;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+/* Estilo cuando el input está seleccionado */
+.answers input[type="radio"]:checked + label {
+    background-color: #00aaff;
+    border-color: #00aaff;
+}
+
+/* Efecto hover en las etiquetas */
+.answers label:hover {
+    background-color: #444;
+}
+
+/* Estilo para el botón de envío */
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #00aaff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: not-allowed;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+button:enabled {
+    cursor: pointer;
+    background-color: #0077cc;
+}
+
+button:hover:enabled {
+    background-color: #005fa3;
+}
+
+/* Estilo para el resultado */
+#result {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 20px;
+    color: #00ff00;
+}

@@ -1,0 +1,260 @@
+<html><head><base href="https://mycalendar.example.com">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Generador de Horario Estudiantil</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+form {
+  background: #f4f4f4;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+select, input[type="time"] {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+button:hover {
+  background: #2980b9;
+}
+
+#calendar {
+  margin-top: 20px;
+}
+
+.fc-event {
+  cursor: pointer;
+}
+</style>
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.10.2/main.min.js'></script>
+</head>
+<body>
+
+<h1>Generador de Horario Estudiantil</h1>
+
+<form id="scheduleForm">
+  <label for="classStart">¿A qué hora comienzan tus clases?</label>
+  <input type="time" id="classStart" required>
+
+  <label for="classEnd">¿A qué hora terminan tus clases?</label>
+  <input type="time" id="classEnd" required>
+
+  <label for="sleepHours">¿Cuántas horas duermes cada noche?</label>
+  <select id="sleepHours" required>
+    <option value="5">5 horas</option>
+    <option value="6">6 horas</option>
+    <option value="7">7 horas</option>
+    <option value="8">8 horas</option>
+    <option value="9">9 horas</option>
+  </select>
+
+  <label for="breakfastTime">¿A qué hora prefieres desayunar?</label>
+  <select id="breakfastTime" required>
+    <option value="06:00">6:00 AM</option>
+    <option value="07:00">7:00 AM</option>
+    <option value="08:00">8:00 AM</option>
+  </select>
+
+  <label for="lunchTime">¿A qué hora prefieres almorzar?</label>
+  <select id="lunchTime" required>
+    <option value="12:00">12:00 PM</option>
+    <option value="13:00">1:00 PM</option>
+    <option value="14:00">2:00 PM</option>
+  </select>
+
+  <label for="dinnerTime">¿A qué hora prefieres cenar?</label>
+  <select id="dinnerTime" required>
+    <option value="18:00">6:00 PM</option>
+    <option value="19:00">7:00 PM</option>
+    <option value="20:00">8:00 PM</option>
+  </select>
+
+  <label for="studyHours">¿Cuánto tiempo dedicas a estudiar diariamente?</label>
+  <select id="studyHours" required>
+    <option value="1">1 hora</option>
+    <option value="2">2 horas</option>
+    <option value="3">3 horas</option>
+    <option value="4">4 horas</option>
+  </select>
+
+  <label for="recreationTime">¿Cuánto tiempo dedicas a la recreación o hobbies cada día?</label>
+  <select id="recreationTime" required>
+    <option value="0.5">30 minutos</option>
+    <option value="1">1 hora</option>
+    <option value="2">2 horas</option>
+  </select>
+
+  <label for="choresTime">¿Cuánto tiempo dedicas a tareas domésticas o responsabilidades diarias?</label>
+  <select id="choresTime" required>
+    <option value="0.5">30 minutos</option>
+    <option value="1">1 hora</option>
+    <option value="2">2 horas</option>
+  </select>
+
+  <button type="submit">Generar Horario</button>
+</form>
+
+<div id="calendar"></div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var calendarEl = document.getElementById('calendar');
+  var calendar = new FullCalendar.Calendar(calendarEl, {
+    initialView: 'timeGridWeek',
+    slotMinTime: '06:00',
+    slotMaxTime: '24:00',
+    allDaySlot: false,
+    headerToolbar: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'timeGridWeek,timeGridDay'
+    },
+    events: []
+  });
+  calendar.render();
+
+  document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    generateSchedule(calendar);
+  });
+});
+
+function generateSchedule(calendar) {
+  // Limpiar eventos existentes
+  calendar.removeAllEvents();
+
+  // Obtener valores del formulario
+  var classStart = document.getElementById('classStart').value;
+  var classEnd = document.getElementById('classEnd').value;
+  var sleepHours = parseInt(document.getElementById('sleepHours').value);
+  var breakfastTime = document.getElementById('breakfastTime').value;
+  var lunchTime = document.getElementById('lunchTime').value;
+  var dinnerTime = document.getElementById('dinnerTime').value;
+  var studyHours = parseInt(document.getElementById('studyHours').value);
+  var recreationTime = parseFloat(document.getElementById('recreationTime').value);
+  var choresTime = parseFloat(document.getElementById('choresTime').value);
+
+  // Generar eventos para la semana
+  for (var i = 1; i <= 5; i++) {
+    var day = new Date();
+    day.setDate(day.getDate() + i - day.getDay());
+    
+    // Clases
+    calendar.addEvent({
+      title: 'Clases',
+      start: day.toISOString().split('T')[0] + 'T' + classStart,
+      end: day.toISOString().split('T')[0] + 'T' + classEnd,
+      color: '#3498db'
+    });
+
+    // Desayuno
+    calendar.addEvent({
+      title: 'Desayuno',
+      start: day.toISOString().split('T')[0] + 'T' + breakfastTime,
+      end: day.toISOString().split('T')[0] + 'T' + addMinutes(breakfastTime, 30),
+      color: '#2ecc71'
+    });
+
+    // Almuerzo
+    calendar.addEvent({
+      title: 'Almuerzo',
+      start: day.toISOString().split('T')[0] + 'T' + lunchTime,
+      end: day.toISOString().split('T')[0] + 'T' + addMinutes(lunchTime, 60),
+      color: '#2ecc71'
+    });
+
+    // Cena
+    calendar.addEvent({
+      title: 'Cena',
+      start: day.toISOString().split('T')[0] + 'T' + dinnerTime,
+      end: day.toISOString().split('T')[0] + 'T' + addMinutes(dinnerTime, 60),
+      color: '#2ecc71'
+    });
+
+    // Estudio
+    var studyStart = addMinutes(classEnd, 60); // 1 hora después de clases
+    calendar.addEvent({
+      title: 'Estudio',
+      start: day.toISOString().split('T')[0] + 'T' + studyStart,
+      end: day.toISOString().split('T')[0] + 'T' + addMinutes(studyStart, studyHours * 60),
+      color: '#9b59b6'
+    });
+
+    // Recreación
+    var recreationStart = addMinutes(studyStart, studyHours * 60 + 30); // 30 minutos después del estudio
+    calendar.addEvent({
+      title: 'Recreación',
+      start: day.toISOString().split('T')[0] + 'T' + recreationStart,
+      end: day.toISOString().split('T')[0] + 'T' + addMinutes(recreationStart, recreationTime * 60),
+      color: '#f1c40f'
+    });
+
+    // Tareas domésticas
+    var choresStart = addMinutes(recreationStart, recreationTime * 60 + 30); // 30 minutos después de la recreación
+    calendar.addEvent({
+      title: 'Tareas domésticas',
+      start: day.toISOString().split('T')[0] + 'T' + choresStart,
+      end: day.toISOString().split('T')[0] + 'T' + addMinutes(choresStart, choresTime * 60),
+      color: '#e67e22'
+    });
+
+    // Dormir
+    var sleepStart = '22:00'; // Asumimos que el estudiante se acuesta a las 10 PM
+    calendar.addEvent({
+      title: 'Dormir',
+      start: day.toISOString().split('T')[0] + 'T' + sleepStart,
+      end: addDays(day, 1).toISOString().split('T')[0] + 'T' + addMinutes('00:00', sleepHours * 60),
+      color: '#34495e'
+    });
+  }
+}
+
+function addMinutes(time, minutes) {
+  var date = new Date('2000-01-01T' + time);
+  date.setMinutes(date.getMinutes() + minutes);
+  return date.toTimeString().slice(0, 5);
+}
+
+function addDays(date, days) {
+  var result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return result;
+}
+</script>
+
+</body></html>
